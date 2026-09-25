@@ -1,9 +1,11 @@
 import { useMemo } from "react"
 import { useGLTF } from "@react-three/drei"
-import { Box3, Vector3 } from "three"
+import { Box3, MathUtils, Vector3 } from "three"
 
 const MODEL_PATH = "/models/head.glb"
 const TARGET_SIZE = 1.3
+const INITIAL_ROTATION_Y = MathUtils.degToRad(35)
+const VERTICAL_OFFSET = 0.15
 
 export function HeadModel() {
   const { scene } = useGLTF(MODEL_PATH)
@@ -22,8 +24,10 @@ export function HeadModel() {
   }, [scene])
 
   return (
-    <group position={position} scale={scale}>
-      <primitive object={scene} />
+    <group position={[0, VERTICAL_OFFSET, 0]} rotation={[0, INITIAL_ROTATION_Y, 0]}>
+      <group position={position} scale={scale}>
+        <primitive object={scene} />
+      </group>
     </group>
   )
 }

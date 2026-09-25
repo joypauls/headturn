@@ -10,8 +10,12 @@ export function Eyebrow({
 }) {
   return (
     <div
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn(
+        "font-heading flex items-center gap-2 text-base text-accent-2 italic",
+        className
+      )}
     >
+      <span className="animate-bounce-soft size-1.5 rounded-full bg-accent-2" />
       {children}
     </div>
   )

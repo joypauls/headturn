@@ -6,10 +6,10 @@ export function ViewerControls({ onReset }: { onReset: () => void }) {
       <button
         type="button"
         onClick={onReset}
-        className="flex items-center gap-2 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="group flex items-center gap-2 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-accent-2"
       >
         Reset view
-        <RotateCcwIcon className="size-3" />
+        <RotateCcwIcon className="ease-bounce size-3 transition-transform duration-500 group-hover:-rotate-180" />
       </button>
     </div>
   )

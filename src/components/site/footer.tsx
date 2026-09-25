@@ -16,7 +16,7 @@ export function Footer() {
               key={s.id}
               href="#"
               aria-label={s.label}
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              className="ease-bounce text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:rotate-6 hover:text-accent-2"
             >
               <svg className="size-4" aria-hidden>
                 <use href={`/icons.svg#${s.id}`} />

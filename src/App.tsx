@@ -7,7 +7,7 @@ import { HowToPage } from "@/pages/HowToPage"
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen w-screen flex-col">
+      <div className="bg-grain flex h-screen w-screen flex-col">
         <Navbar />
         <main className="flex-1 overflow-auto">
           <Routes>

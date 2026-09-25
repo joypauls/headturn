@@ -6,8 +6,10 @@ import { HeadModel } from "./HeadModel"
 
 export function Scene({
   controlsRef,
+  onInteract,
 }: {
   controlsRef?: RefObject<OrbitControlsImpl | null>
+  onInteract?: () => void
 }) {
   return (
     <Canvas
@@ -33,6 +35,7 @@ export function Scene({
         enablePan={false}
         minDistance={1}
         maxDistance={5}
+        onStart={onInteract}
         makeDefault
       />
     </Canvas>
