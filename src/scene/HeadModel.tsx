@@ -1,22 +1,28 @@
-import { useRef } from "react"
-import { useFrame } from "@react-three/fiber"
+import { useMemo } from "react"
 import { useGLTF } from "@react-three/drei"
-import type { Group } from "three"
+import { Box3, Vector3 } from "three"
 
 const MODEL_PATH = "/models/head.glb"
+const TARGET_SIZE = 1.3
 
 export function HeadModel() {
-  const groupRef = useRef<Group>(null)
   const { scene } = useGLTF(MODEL_PATH)
 
-  useFrame((_, delta) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y += delta * 0.15
+  const { scale, position } = useMemo(() => {
+    const box = new Box3().setFromObject(scene)
+    const size = box.getSize(new Vector3())
+    const center = box.getCenter(new Vector3())
+    const maxDimension = Math.max(size.x, size.y, size.z) || 1
+    const normalizedScale = TARGET_SIZE / maxDimension
+
+    return {
+      scale: normalizedScale,
+      position: center.multiplyScalar(-normalizedScale),
     }
-  })
+  }, [scene])
 
   return (
-    <group ref={groupRef}>
+    <group position={position} scale={scale}>
       <primitive object={scene} />
     </group>
   )
