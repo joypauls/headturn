@@ -1,5 +1,4 @@
 import { MousePointer2Icon, RotateCcwIcon, ZoomInIcon } from "lucide-react"
-import { Eyebrow } from "@/components/site/eyebrow"
 import { Footer } from "@/components/site/footer"
 import { IconBadge } from "@/components/site/icon-badge"
 
@@ -30,10 +29,9 @@ const steps = [
 export function HowToPage() {
   return (
     <div className="flex min-h-full flex-col">
-      <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
-        <Eyebrow>How To</Eyebrow>
+      <div className="mx-auto w-full max-w-2xl flex-1 px-6 pt-28 pb-16">
         <h1 className="font-heading mt-3 text-3xl font-semibold text-foreground">
-          Using the <span className="text-accent-2 italic">viewer</span>
+          Using the viewer
         </h1>
         <ol className="mt-6 space-y-5">
           {steps.map((step, index) => (

@@ -8,10 +8,15 @@ import { ViewerControls } from "@/scene/ViewerControls"
 export function ViewerPage() {
   const controlsRef = useRef<OrbitControlsImpl>(null)
   const [hasInteracted, setHasInteracted] = useState(false)
+  const [showBoundingBox, setShowBoundingBox] = useState(false)
 
   return (
     <div className="relative h-full w-full cursor-grab overflow-hidden bg-background active:cursor-grabbing">
-      <Scene controlsRef={controlsRef} onInteract={() => setHasInteracted(true)} />
+      <Scene
+        controlsRef={controlsRef}
+        onInteract={() => setHasInteracted(true)}
+        showBoundingBox={showBoundingBox}
+      />
       <ModelLoader />
       <p
         className={cn(
@@ -21,7 +26,11 @@ export function ViewerPage() {
       >
         Give it a spin!
       </p>
-      <ViewerControls onReset={() => controlsRef.current?.reset()} />
+      <ViewerControls
+        onReset={() => controlsRef.current?.reset()}
+        showBoundingBox={showBoundingBox}
+        onToggleBoundingBox={() => setShowBoundingBox((value) => !value)}
+      />
     </div>
   )
 }

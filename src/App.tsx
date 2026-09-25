@@ -7,9 +7,9 @@ import { HowToPage } from "@/pages/HowToPage"
 function App() {
   return (
     <BrowserRouter>
-      <div className="bg-grain flex h-screen w-screen flex-col">
+      <div className="bg-grain relative h-screen w-screen">
         <Navbar />
-        <main className="flex-1 overflow-auto">
+        <main className="h-full w-full overflow-auto">
           <Routes>
             <Route path="/" element={<ViewerPage />} />
             <Route path="/how-to" element={<HowToPage />} />

@@ -1,5 +1,4 @@
 import { RotateCcwIcon, SparkleIcon, UploadIcon } from "lucide-react"
-import { Eyebrow } from "@/components/site/eyebrow"
 import { Footer } from "@/components/site/footer"
 import { IconBadge } from "@/components/site/icon-badge"
 
@@ -31,15 +30,13 @@ const capabilities = [
 export function AboutPage() {
   return (
     <div className="flex min-h-full flex-col">
-      <div className="mx-auto w-full max-w-2xl flex-1 px-6 py-16">
-        <Eyebrow>About</Eyebrow>
+      <div className="mx-auto w-full max-w-2xl flex-1 px-6 pt-28 pb-16">
         <h1 className="font-heading mt-3 text-3xl font-semibold text-foreground">
-          head<span className="text-accent-2 italic">turn</span>
+          About the App
         </h1>
         <p className="mt-4 leading-relaxed text-muted-foreground">
-          headturn is a small, slightly obsessive 3D model viewer built with
-          React Three Fiber. Drop a .glb file into{" "}
-          <code>public/models/head.glb</code> and turn it every which way.
+          Headturn is a small 3D model viewer built with
+          React Three Fiber.
         </p>
 
         <div className="mt-10 space-y-6 border-t border-border pt-8">
