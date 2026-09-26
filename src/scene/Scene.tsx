@@ -22,10 +22,10 @@ export function Scene({
       camera={{ position: [0, 0, 3], fov: 45 }}
     >
       <ambientLight intensity={0.6} color="#f5f0e8" />
-      <directionalLight position={[3, 5, 4]} intensity={1.2} color="#f5f0e8" />
+      <directionalLight position={[3, 5, 4]} intensity={1.1} color="#f5f0e8" />
       <Suspense fallback={null}>
         <HeadModel showBoundingBox={showBoundingBox} jawWide={jawWide} />
-        <Environment preset="studio" />
+        <Environment preset="studio" intensity={0.5} />
       </Suspense>
       <OrbitControls
         ref={controlsRef}

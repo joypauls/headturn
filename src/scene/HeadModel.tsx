@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useThree } from "@react-three/fiber"
 import { useGLTF } from "@react-three/drei"
 import { Box3, Box3Helper, Color, MathUtils, type Mesh, type PerspectiveCamera, Vector3 } from "three"
@@ -32,6 +32,22 @@ export function HeadModel({
   const { scene } = useGLTF(MODEL_PATH)
   const { camera } = useThree()
   const isMobile = useMediaQuery("(max-width: 640px)")
+
+  // Captured once, via useState's lazy initializer, before OrbitControls can
+  // touch the camera. `camera.position.z` (and even `camera.position.length()`
+  // once orbited) is NOT a stable proxy for "distance to target" after the
+  // user has rotated/dollied: rotating past 90°/180° can drive `.z` through
+  // zero and negative, which flipped/mirrored the whole model when this value
+  // was read live and the sizing memo below happened to recompute (e.g. on an
+  // isMobile breakpoint crossing while resizing). Freezing it here means
+  // later reads of the live (possibly-orbited) camera can't corrupt sizing.
+  const [initialCamera] = useState(() => {
+    const perspectiveCamera = camera as PerspectiveCamera
+    return {
+      fov: perspectiveCamera.fov,
+      distance: perspectiveCamera.position.length(),
+    }
+  })
 
   // Find the mesh carrying the "JawWide" shape key (blend shape) baked into
   // the GLB by Blender. Only found once per model load, since scene/its
@@ -91,17 +107,16 @@ export function HeadModel({
   // model (below) keeps it oriented with whichever way the head is facing.
   const boxHelper = useMemo(() => new Box3Helper(box, new Color("gray")), [box])
 
-  // The target size comes from the camera's initial fov/distance rather than
-  // a fixed world-unit constant, so it stays correct if those ever change.
-  // We deliberately don't depend on the live camera position: OrbitControls
-  // mutates it in place as the user dollies/orbits, and re-measuring against
-  // that would resize the model whenever they zoom. This is safe to
-  // recompute on isMobile changes since it only derives scale/position from
-  // the already-measured raw size above, rather than re-measuring the (by
-  // then scaled) live scene graph.
+  // The target size comes from the camera's initial fov/distance (frozen
+  // above) rather than a fixed world-unit constant, so it stays correct if
+  // those ever change, while remaining immune to later camera movement from
+  // OrbitControls. This is safe to recompute on isMobile changes since it
+  // only derives scale/position from the already-measured raw size above and
+  // the frozen initial camera values, rather than re-measuring the (by then
+  // scaled/orbited) live scene graph.
   const { scale, position } = useMemo(() => {
-    const { fov, position: cameraPosition } = camera as PerspectiveCamera
-    const viewHeight = 2 * cameraPosition.z * Math.tan(MathUtils.degToRad(fov) / 2)
+    const { fov, distance } = initialCamera
+    const viewHeight = 2 * distance * Math.tan(MathUtils.degToRad(fov) / 2)
     const targetSize = viewHeight * (isMobile ? MOBILE_FILL_FRACTION : FILL_FRACTION)
     const normalizedScale = targetSize / maxDimension
     const verticalOffset =
@@ -114,8 +129,7 @@ export function HeadModel({
       scale: normalizedScale,
       position: modelPosition,
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maxDimension, center, isMobile])
+  }, [maxDimension, center, isMobile, initialCamera])
 
   return (
     <group rotation={[0, INITIAL_ROTATION_Y, 0]}>
