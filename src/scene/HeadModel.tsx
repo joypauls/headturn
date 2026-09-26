@@ -9,9 +9,16 @@ const MODEL_PATH = "/models/first_head.glb"
 // bounding-box dimension should fill. This is resolution/scale-independent —
 // unlike a fixed world-unit target size, it's derived from the camera's own
 // fov/distance, so any model auto-sizes correctly without hand-tuning.
-const FILL_FRACTION = 1
-const MOBILE_FILL_FRACTION = 0.75
+const FILL_FRACTION = 0.6
+const MOBILE_FILL_FRACTION = 0.45
 const INITIAL_ROTATION_Y = MathUtils.degToRad(35)
+// Shifts the centered model vertically, as a fraction of the camera's view
+// height (same resolution-independent unit as FILL_FRACTION). Positive moves
+// the model up, negative moves it down. Useful for nudging the model out
+// from behind overlaid UI (e.g. the navbar) without hardcoding pixel/world
+// values that would need retuning per camera setting.
+const VERTICAL_OFFSET_FRACTION = -0.03
+const MOBILE_VERTICAL_OFFSET_FRACTION = -0.02
 
 export function HeadModel({ showBoundingBox = false }: { showBoundingBox?: boolean }) {
   const { scene } = useGLTF(MODEL_PATH)
@@ -69,10 +76,15 @@ export function HeadModel({ showBoundingBox = false }: { showBoundingBox?: boole
     const viewHeight = 2 * cameraPosition.z * Math.tan(MathUtils.degToRad(fov) / 2)
     const targetSize = viewHeight * (isMobile ? MOBILE_FILL_FRACTION : FILL_FRACTION)
     const normalizedScale = targetSize / maxDimension
+    const verticalOffset =
+      viewHeight * (isMobile ? MOBILE_VERTICAL_OFFSET_FRACTION : VERTICAL_OFFSET_FRACTION)
+
+    const modelPosition = center.clone().multiplyScalar(-normalizedScale)
+    modelPosition.y += verticalOffset
 
     return {
       scale: normalizedScale,
-      position: center.clone().multiplyScalar(-normalizedScale),
+      position: modelPosition,
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maxDimension, center, isMobile])
