@@ -1,8 +1,10 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useThree } from "@react-three/fiber"
 import { useGLTF } from "@react-three/drei"
-import { Box3, Box3Helper, Color, MathUtils, type PerspectiveCamera, Vector3 } from "three"
+import { Box3, Box3Helper, Color, MathUtils, type Mesh, type PerspectiveCamera, Vector3 } from "three"
 import { useMediaQuery } from "@/hooks/use-media-query"
+
+const JAW_WIDE_MORPH_TARGET = "JawWide"
 
 const MODEL_PATH = "/models/first_head.glb"
 // Fraction of the camera's vertical view height that the model's largest
@@ -17,13 +19,39 @@ const INITIAL_ROTATION_Y = MathUtils.degToRad(35)
 // the model up, negative moves it down. Useful for nudging the model out
 // from behind overlaid UI (e.g. the navbar) without hardcoding pixel/world
 // values that would need retuning per camera setting.
-const VERTICAL_OFFSET_FRACTION = -0.03
+const VERTICAL_OFFSET_FRACTION = -0.02
 const MOBILE_VERTICAL_OFFSET_FRACTION = -0.02
 
-export function HeadModel({ showBoundingBox = false }: { showBoundingBox?: boolean }) {
+export function HeadModel({
+  showBoundingBox = false,
+  jawWide = 0.5,
+}: {
+  showBoundingBox?: boolean
+  jawWide?: number
+}) {
   const { scene } = useGLTF(MODEL_PATH)
   const { camera } = useThree()
   const isMobile = useMediaQuery("(max-width: 640px)")
+
+  // Find the mesh carrying the "JawWide" shape key (blend shape) baked into
+  // the GLB by Blender. Only found once per model load, since scene/its
+  // descendants don't change identity between renders.
+  const jawWideMesh = useMemo(() => {
+    let found: Mesh | undefined
+    scene.traverse((child) => {
+      const mesh = child as Mesh
+      if (mesh.morphTargetDictionary?.[JAW_WIDE_MORPH_TARGET] !== undefined) {
+        found = mesh
+      }
+    })
+    return found
+  }, [scene])
+
+  useEffect(() => {
+    if (!jawWideMesh?.morphTargetDictionary || !jawWideMesh.morphTargetInfluences) return
+    const index = jawWideMesh.morphTargetDictionary[JAW_WIDE_MORPH_TARGET]
+    jawWideMesh.morphTargetInfluences[index] = jawWide
+  }, [jawWideMesh, jawWide])
 
   // Measured once from the model's raw geometry. Box3().setFromObject reads
   // the object's live matrixWorld, which the render loop keeps updated with
@@ -61,7 +89,7 @@ export function HeadModel({ showBoundingBox = false }: { showBoundingBox?: boole
   // an axis-aligned box, so it can't stay aligned to the head's rotation.
   // Rendering this as a child of the same rotated/scaled groups as the
   // model (below) keeps it oriented with whichever way the head is facing.
-  const boxHelper = useMemo(() => new Box3Helper(box, new Color("red")), [box])
+  const boxHelper = useMemo(() => new Box3Helper(box, new Color("gray")), [box])
 
   // The target size comes from the camera's initial fov/distance rather than
   // a fixed world-unit constant, so it stays correct if those ever change.

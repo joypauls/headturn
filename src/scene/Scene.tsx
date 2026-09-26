@@ -8,10 +8,12 @@ export function Scene({
   controlsRef,
   onInteract,
   showBoundingBox,
+  jawWide,
 }: {
   controlsRef?: RefObject<OrbitControlsImpl | null>
   onInteract?: () => void
   showBoundingBox?: boolean
+  jawWide?: number
 }) {
   return (
     <Canvas
@@ -22,7 +24,7 @@ export function Scene({
       <ambientLight intensity={0.6} color="#f5f0e8" />
       <directionalLight position={[3, 5, 4]} intensity={1.2} color="#f5f0e8" />
       <Suspense fallback={null}>
-        <HeadModel showBoundingBox={showBoundingBox} />
+        <HeadModel showBoundingBox={showBoundingBox} jawWide={jawWide} />
         <Environment preset="studio" />
       </Suspense>
       <OrbitControls

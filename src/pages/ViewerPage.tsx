@@ -9,6 +9,7 @@ export function ViewerPage() {
   const controlsRef = useRef<OrbitControlsImpl>(null)
   const [hasInteracted, setHasInteracted] = useState(false)
   const [showBoundingBox, setShowBoundingBox] = useState(false)
+  const [jawWide, setJawWide] = useState(0.5)
 
   return (
     <div className="relative h-full w-full cursor-grab overflow-hidden bg-background active:cursor-grabbing">
@@ -16,6 +17,7 @@ export function ViewerPage() {
         controlsRef={controlsRef}
         onInteract={() => setHasInteracted(true)}
         showBoundingBox={showBoundingBox}
+        jawWide={jawWide}
       />
       <ModelLoader />
       <p
@@ -30,6 +32,8 @@ export function ViewerPage() {
         onReset={() => controlsRef.current?.reset()}
         showBoundingBox={showBoundingBox}
         onToggleBoundingBox={() => setShowBoundingBox((value) => !value)}
+        jawWide={jawWide}
+        onJawWideChange={setJawWide}
       />
     </div>
   )
