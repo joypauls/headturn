@@ -25,13 +25,15 @@ export function Scene({
       <directionalLight position={[3, 5, 4]} intensity={1.1} color="#f5f0e8" />
       <Suspense fallback={null}>
         <HeadModel showBoundingBox={showBoundingBox} jawWide={jawWide} />
-        <Environment preset="studio" intensity={0.5} />
+        <Environment preset="studio" environmentIntensity={0.5} />
       </Suspense>
       <OrbitControls
         ref={controlsRef}
         enablePan={false}
         minDistance={1}
         maxDistance={5}
+        zoomSpeed={0.5}
+        dampingFactor={0.2}
         onStart={onInteract}
         makeDefault
       />
